@@ -1,4 +1,4 @@
-#version 150 core
+#version 410 core
 
 uniform vec4 u_Time;
 uniform vec4 u_SinTime;

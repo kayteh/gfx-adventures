@@ -35,3 +35,5 @@ editing a shader and pressing page up will reload them. press escape to exit.
 ### 02 Frameworks
 
 so now that i have legs, i may as well stretch my c++ knowledge a bit. probably going to start with makefiles (CMake or premake? idk. something, i know how painful makefiles are from experience.)
+
+bumped opengl version to 4.1, this may make my linux VM salty but i have my mac for now. nbd. seemed to work, so continuing!
