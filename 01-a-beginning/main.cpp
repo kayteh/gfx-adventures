@@ -180,10 +180,15 @@ int main() {
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
 
+#ifdef __APPLE__
+  int x,y;
+  glfwGetWindowPos(window, &x, &y);
+  glfwSetWindowPos(window, ++x, y);
+#endif
+
   bool reloadDown = false;
 
   while (!glfwWindowShouldClose(window)) {
-
     shaderUniformUpdate();
     
     drawTriangle(0.2f, "triangle");
@@ -216,7 +221,10 @@ int main() {
     }
 
     setWindowFPS(window);
-    // glfwSetWindowTitle();
+    
+    #ifdef __APPLE__
+    fix_render_on_mac(window);
+    #endif
   }
 
   return 0;
