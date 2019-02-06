@@ -39,6 +39,7 @@ then open the solution.
 - [ ] physics
 - [x] windows support/tooling
 - [x] premake5, because i was too lazy to install it
+- [ ] fix weird malloc free break on exit.
 
 *stuff for way later*
 
@@ -69,3 +70,7 @@ this one also lost me a lot of sleep, accidentally got too far down the pointer 
 02's detour into making this system work on.. windows.. and some other detour-y things.
 
 even though this seems like a simple task, it was kind of was. this was a complete mess of tooling issues, both my on my system and in my code. windows support wasn't difficult, as I already sorta realized what I needed to do for it... but i come back to my mac and find everything scuffed again. and regex, out of all things, had a massive bug. but the bug? it wasn't a bug at all. it was a linker problem. any atom (think `.`), in any form mind you (incl. \x00 and etc), would segfault on search. i spent maybe 2 hours going through things to realize this. turns out, if i compiled with mac's gcc alias (but it was actually clang but apple edition,) it would actually work. so that means my user mode clang's ld.lld was linking in a wild direction and either SIGSEGV or SIGBUS-ing any time that code ran. i removed my own alias and it started working. jfc.
+
+### 04 Actual Graphics
+
+time for actually like.. doing opengl things. i guess.
