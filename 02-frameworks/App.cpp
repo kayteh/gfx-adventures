@@ -33,14 +33,14 @@ void App::mainLoop() {
   auto currentClock = chrono::high_resolution_clock::now();
   lastDrawTick = currentClock;
   lastFixedUpdate = currentClock;
-  this_thread::sleep_for(1s);
+  // this_thread::sleep_for(1s);
 
   cout << "TIMINGS: max fps = " << MAX_FPS << " ("<< 1000/MAX_FPS <<"ms); fixed delta time = " << FIXED_UPDATE_DELTA << "ms" << endl;
 
-  D("main loop prewarmed")
+  // D("main loop prewarmed")
   while (!glfwWindowShouldClose(window)) {
     // D("loop")
-    currentClock = chrono::high_resolution_clock::now();
+    currentClock = chrono::high_resolution_clock::now();//
 
     // fixed updates
     if (currentClock - lastFixedUpdate >= chrono::milliseconds(FIXED_UPDATE_DELTA)) {
@@ -77,6 +77,7 @@ void App::mainLoop() {
 
 void App::earlyUpdate() {
   // D("app - early update")
+  // tick over 
 };
 
 void App::update() {
@@ -152,7 +153,7 @@ void App::init() {
   createEntities();
 };
 
-shared_ptr<Shader> triangle;
+// shared_ptr<Shader> triangle;
 void App::reloadShaders() {
   D("app - reload shaders")
   for (auto const& s: shaders) {
@@ -161,14 +162,13 @@ void App::reloadShaders() {
     sh->loadFiles(s.second);
     sh->link();
     Shader::shaders.insert_or_assign(s.first, shared_ptr<Shader>(sh));
-    triangle = sh;
   }
 };
 
 
 void App::createEntities() {
   D("app - create entities")
-  for(uint i = 0; i < 1; i++) {
+  for(uint i = 0; i < 3; i++) {
     float o = 0.1 * i;
     auto p = make_shared<Polygon>(2, vector<float>{ 
       0.0f + o,  0.5f + o,
@@ -176,7 +176,7 @@ void App::createEntities() {
      -0.5f + o, -0.5f + o
     });
     
-    p->shader = triangle;
+    p->shader = Shader::get("triangle");
     entities.push_back(shared_ptr<Polygon>(p));
   }
 }

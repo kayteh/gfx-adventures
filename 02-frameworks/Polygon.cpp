@@ -23,9 +23,7 @@ void Polygon::draw() {
   // D("polygon draw")
   glBindVertexArray(vao);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  float* verts = &vertexes[0];
-  cout << sizeof(verts) << endl;
-  glBufferData(GL_ARRAY_BUFFER, 6, verts, drawType);
+  glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(float), & vertexes.front(), drawType);
   shader->use();
   GLint a = glGetAttribLocation(shader->program, "position");
   glVertexAttribPointer(a, 2, GL_FLOAT, GL_FALSE, 0, 0);
