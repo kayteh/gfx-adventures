@@ -14,10 +14,13 @@ map<string, vector<string>> shaders = {
   { "triangle", { "shaders/triangle.frag", "shaders/triangle.vert" } },
 };
 
-vector<unique_ptr<Shader>> shaderHeap;
-
 App::App() {}
-App::~App() {}
+App::~App() {
+  D("APP DECONST")
+  entities.clear();
+  Shader::shaders.clear();
+  glfwSetWindowShouldClose(window, GL_TRUE);
+}
 
 // chrono::steady_clock steadyClock;
 // chrono::high_resolution_clock hrClock;
@@ -53,7 +56,6 @@ void App::mainLoop() {
       earlyUpdate();
       update();
       lateUpdate();
-      glClear(GL_COLOR_BUFFER_BIT);
 
 
       // shims
@@ -74,7 +76,7 @@ void App::mainLoop() {
 };
 
 void App::earlyUpdate() {
-  D("app - early update")
+  // D("app - early update")
 };
 
 void App::update() {
@@ -120,7 +122,7 @@ void App::init() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwSetErrorCallback(utils::glfwError);
+    // glfwSetErrorCallback(utils::glfwError);
     window = glfwCreateWindow(800, 600, WINDOW_TITLE, NULL, NULL);
     if (window == NULL) {
       std::cout << "Failed to create GLFW window" << std::endl;
@@ -150,6 +152,7 @@ void App::init() {
   createEntities();
 };
 
+shared_ptr<Shader> triangle;
 void App::reloadShaders() {
   D("app - reload shaders")
   for (auto const& s: shaders) {
@@ -157,9 +160,11 @@ void App::reloadShaders() {
     sh->name = s.first;
     sh->loadFiles(s.second);
     sh->link();
-    Shader::shaders.insert_or_assign(s.first, sh);
+    Shader::shaders.insert_or_assign(s.first, shared_ptr<Shader>(sh));
+    triangle = sh;
   }
 };
+
 
 void App::createEntities() {
   D("app - create entities")
@@ -171,7 +176,7 @@ void App::createEntities() {
      -0.5f + o, -0.5f + o
     });
     
-    p->shader = Shader::get("triangle").get();
-    entities.push_back(p);
+    p->shader = triangle;
+    entities.push_back(shared_ptr<Polygon>(p));
   }
 }

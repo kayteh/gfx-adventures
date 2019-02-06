@@ -74,21 +74,19 @@ void Shader::loadString(string shaderCode, int type) {
   // cout << "SHADER CODE: ---" << endl << code << endl; 
   // #endif // DEBUG
 
-  parts.push_back(part);
+  // commit and delete
+  glAttachShader(program, part);
+  glDeleteShader(part);
 }
 
 void Shader::link() {
   D("shader link")
-  for (auto const& part: parts) {
-    glAttachShader(program, part);
-  }
-
   glLinkProgram(program);
   linked = true;
 }
 
 void Shader::use() {
-  D("shader use")
+  // D("shader use")
   if (linked == false) {
     link();
   }
@@ -100,11 +98,4 @@ void Shader::reset() {
   D("shader reset")
   parts.clear();
   linked = false;
-}
-
-void Shader::commitVertexAttribute(const char* attribute, int length) {
-  D("shader commit vertex attribute")
-  GLint a = glGetAttribLocation(program, attribute);
-  glVertexAttribPointer(a, length, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(a);
 }

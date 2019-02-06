@@ -1,6 +1,8 @@
+#pragma once
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 #include <chrono>
 #include <fstream>
 #include <iostream>
@@ -10,6 +12,12 @@
 #include <sstream>
 #include <thread>
 #include <vector>
+
+#ifdef DEBUG
+#define D(text) { std::cout << "DEBUG: " << text << endl; };
+#else
+#define D(t) {};
+#endif
 
 #ifndef WINDOW_TITLE
 #define WINDOW_TITLE "GFX Adventures"

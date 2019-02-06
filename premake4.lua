@@ -7,7 +7,7 @@ solution "GFXAdventures"
   targetname "main"
 
   configuration "linux"
-    links { "GL", "glfw", "GLEW" }
+    links { "GL", "glfw", "GLEW", "glm" }
   
   configuration "macosx"
     links { "OpenGL.framework", "glfw", "glew" }

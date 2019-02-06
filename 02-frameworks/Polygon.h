@@ -9,13 +9,13 @@ public:
   Polygon(uint dim, vector<float> vertices);
   ~Polygon();
 
-  vector<float> vertices;
+  vector<float> vertexes;
   uint dimensions;
 
   GLuint vao;
   GLuint vbo;
 
-  Shader* shader;
+ shared_ptr<Shader> shader;
   // Shader shader;
   GLint drawType = GL_STATIC_DRAW;
 

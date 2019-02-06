@@ -17,7 +17,6 @@ public:
   void use();
   void reset();
 
-  void commitVertexAttribute(const char* attribute, int length);
 
   inline static shared_ptr<Shader> get(string name) {
     return shaders[name];

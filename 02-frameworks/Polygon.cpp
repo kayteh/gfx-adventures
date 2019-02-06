@@ -6,11 +6,11 @@ Polygon::Polygon(uint dim) {
 }
 Polygon::Polygon(uint dim, vector<float> verts) {
   dimensions = dim;
-  vertices = verts;
+  vertexes = verts;
   init();
 }
 
-Polygon::~Polygon() {}
+Polygon::~Polygon() { shader = nullptr; }
 
 void Polygon::init() {
   D("polygon init")
@@ -18,12 +18,17 @@ void Polygon::init() {
   glGenBuffers(1, &vbo);
 }
 
+
 void Polygon::draw() {
-  D("polygon draw")
+  // D("polygon draw")
   glBindVertexArray(vao);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, vertices.size(), &vertices[0], drawType);
+  float* verts = &vertexes[0];
+  cout << sizeof(verts) << endl;
+  glBufferData(GL_ARRAY_BUFFER, 6, verts, drawType);
   shader->use();
-  shader->commitVertexAttribute("position", 2);
+  GLint a = glGetAttribLocation(shader->program, "position");
+  glVertexAttribPointer(a, 2, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(a);
   glDrawArrays(GL_TRIANGLES, 0, 3);
 }
