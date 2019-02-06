@@ -33,9 +33,9 @@ then open the solution.
 ## todo
 
 - [x] render 2d stuff!
+- [ ] render 3d stuff!
 - [ ] engine framework-ish
 - [ ] ???
-- [ ] render 3d stuff!
 - [ ] physics
 - [x] windows support/tooling
 - [x] premake5, because i was too lazy to install it

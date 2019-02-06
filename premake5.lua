@@ -8,22 +8,23 @@ workspace "GFXAdventures"
   
   filter "system:Linux"
     links { "GL", "glfw", "GLEW", "stdc++fs" }
+    defines { "__LINUX__" }
   
   filter "system:MacOSX"
     links { "OpenGL.framework", "glfw", "glew", "c++fs" }
     libdirs { "/usr/local/opt/llvm/lib" }
+    defines { "__APPLE__" }
   
   filter "system:Linux or MacOSX"
     toolset "clang"
-    -- buildoptions { "-std=c++17" }
+    buildoptions { "-pedantic" }
 
   filter "system:Windows"
-	  libdirs { "./vendor/win32" }
+    libdirs { "./vendor/win32" }
     links { "OpenGL32", "glfw3", "glew32s" }
     defines { "__WIN32__" }
 
   filter "configurations:Debug"
-    buildoptions { "-pedantic" }
     defines { "DEBUG" }
     symbols "On"
     optimize "Debug"
