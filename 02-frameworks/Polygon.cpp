@@ -18,12 +18,12 @@ void Polygon::init() {
   glGenBuffers(1, &vbo);
 }
 
-
 void Polygon::draw() {
   // D("polygon draw")
   glBindVertexArray(vao);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(float), & vertexes.front(), drawType);
+  glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(float),
+               &vertexes.front(), drawType);
   shader->use();
   GLint a = glGetAttribLocation(shader->program, "position");
   glVertexAttribPointer(a, dimensions, GL_FLOAT, GL_FALSE, 0, 0);

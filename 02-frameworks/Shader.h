@@ -2,7 +2,6 @@
 #include <stdinc.h>
 using namespace std;
 
-
 class Shader {
 public:
   Shader();
@@ -24,19 +23,15 @@ public:
   GLint uniform(string uniformName);
 
   void updateUniforms(
-    chrono::time_point<chrono::high_resolution_clock> lastFrame, 
-    chrono::time_point<chrono::high_resolution_clock> currentFrame
-  );
+      chrono::time_point<chrono::high_resolution_clock> lastFrame,
+      chrono::time_point<chrono::high_resolution_clock> currentFrame);
 
-  inline static shared_ptr<Shader> get(string name) {
-    return shaders[name];
-  }
-  
+  inline static shared_ptr<Shader> get(string name) { return shaders[name]; }
 
   inline static map<string, shared_ptr<Shader>> shaders;
   bool linked = false;
 
-  static void preprocessGLSL(string* code);
+  static void preprocessGLSL(string *code);
 
 private:
   vector<GLuint> parts;

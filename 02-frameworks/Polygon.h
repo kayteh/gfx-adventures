@@ -1,6 +1,6 @@
 #pragma once
-#include <stdinc.h>
 #include "Shader.h"
+#include <stdinc.h>
 using namespace std;
 
 class Polygon {
@@ -15,11 +15,12 @@ public:
   GLuint vao;
   GLuint vbo;
 
- shared_ptr<Shader> shader;
+  shared_ptr<Shader> shader;
   // Shader shader;
   GLint drawType = GL_STATIC_DRAW;
 
   void draw();
+
 private:
   void init();
 };

@@ -1,7 +1,7 @@
 #pragma once
-#include <stdinc.h>
 #include "Polygon.h"
 #include "Shader.h"
+#include <stdinc.h>
 using namespace std;
 
 class App {
@@ -9,7 +9,7 @@ public:
   App();
   ~App();
 
-  GLFWwindow* window;
+  GLFWwindow *window;
 
   void mainLoop();
   void earlyUpdate();

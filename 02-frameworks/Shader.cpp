@@ -1,18 +1,19 @@
-#include "App.h"
 #include "Shader.h"
+#include "App.h"
 
 // OpenGL Shader Class Implementation
 int typeFromExt(string path) {
   if (path.find(".vert") != string::npos) {
-      return GL_VERTEX_SHADER;
-    } else if (path.find(".frag") != string::npos) {
-      return GL_FRAGMENT_SHADER;
-    } else if (path.find(".geom") != string::npos) {
-      return GL_GEOMETRY_SHADER;
-    } else {
-      cerr << "SHADER LOAD ERROR: file " << path.c_str() << " wasn't marked in a way we'd know what it is." << endl;
-      exit(101);
-    }
+    return GL_VERTEX_SHADER;
+  } else if (path.find(".frag") != string::npos) {
+    return GL_FRAGMENT_SHADER;
+  } else if (path.find(".geom") != string::npos) {
+    return GL_GEOMETRY_SHADER;
+  } else {
+    cerr << "SHADER LOAD ERROR: file " << path.c_str()
+         << " wasn't marked in a way we'd know what it is." << endl;
+    exit(101);
+  }
 }
 
 void checkStatusPart(GLuint shaderPart) {
@@ -21,14 +22,14 @@ void checkStatusPart(GLuint shaderPart) {
   glGetShaderiv(shaderPart, GL_COMPILE_STATUS, &status);
   glGetShaderInfoLog(shaderPart, 512, NULL, statusBuffer);
 
-  #ifdef NDEBUG
+#ifdef NDEBUG
   if (status != GL_TRUE) {
-  #endif
+#endif
     cout << "Shader Compile Log:" << endl;
     cout << statusBuffer << endl << endl;
-  #ifdef NDEBUG
+#ifdef NDEBUG
   }
-  #endif
+#endif
 }
 
 Shader::Shader() {
@@ -44,20 +45,20 @@ Shader::~Shader() {
 
 void Shader::loadFiles(vector<string> files) {
   D("shader load files")
-  for (auto const& file: files) {
+  for (auto const &file : files) {
     loadFile(file);
   }
 }
 
 void Shader::loadFile(string file) {
   D("shader load file")
-  ifstream fileStream (file);
+  ifstream fileStream(file);
   stringstream code;
   if (fileStream.is_open()) {
     code << fileStream.rdbuf();
-    #ifdef DEBUG
+#ifdef DEBUG
     cout << "SHADER FILE: " << file.c_str() << endl;
-    #endif // DEBUG
+#endif // DEBUG
     loadString(code.str(), typeFromExt(file));
   }
 }
@@ -68,13 +69,13 @@ void Shader::loadString(string shaderCode, int type) {
   preprocessGLSL(&shaderCode);
 
   GLuint part = glCreateShader(type);
-  const char* code = shaderCode.c_str();
+  const char *code = shaderCode.c_str();
   glShaderSource(part, 1, &code, NULL);
   glCompileShader(part);
   checkStatusPart(part);
 
   // #ifdef DEBUG
-  // cout << "SHADER CODE: ---" << endl << code << endl; 
+  // cout << "SHADER CODE: ---" << endl << code << endl;
   // #endif // DEBUG
 
   // commit and delete
@@ -105,12 +106,12 @@ void Shader::reset() {
 
 static map<string, string> includeCache;
 static regex glslInclude("\\#include \"(.*)\"");
-void Shader::preprocessGLSL(string* code) {
+void Shader::preprocessGLSL(string *code) {
   D("preprocess")
   // find includes
   smatch directive;
-  
-  while(regex_search(*code, directive, glslInclude)) {
+
+  while (regex_search(*code, directive, glslInclude)) {
     stringstream injectedCode;
 
     string fileName = directive.str(1);
@@ -127,22 +128,19 @@ void Shader::preprocessGLSL(string* code) {
         pathname = fs::absolute(SHADER_INCLUDES "/./" + fileName);
         data.open(pathname);
         if (!data.is_open()) {
-          cout << "WARNING: Shader include " << fileName << " wasn't found." << endl;
+          cout << "WARNING: Shader include " << fileName << " wasn't found."
+               << endl;
           includeCache.insert_or_assign(fileName, "");
           continue;
         }
-      } 
+      }
       loadedCode << data.rdbuf();
       includeCache.insert_or_assign(fileName, loadedCode.str());
       injectedCode << loadedCode.rdbuf();
     }
     injectedCode << endl << "// -- END " << fileName << endl;
 
-    code->replace(
-      directive.position(), 
-      directive.length(),
-      injectedCode.str().c_str()
-    );
+    code->replace(directive.position(), directive.length(),
+                  injectedCode.str().c_str());
   }
-
 }
