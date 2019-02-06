@@ -1,5 +1,4 @@
 #include "Shader.h"
-#include "App.h"
 
 // OpenGL Shader Class Implementation
 int typeFromExt(string path) {

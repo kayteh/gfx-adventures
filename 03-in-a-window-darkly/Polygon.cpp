@@ -1,10 +1,12 @@
 #include "Polygon.h"
 
-Polygon::Polygon(uint dim) {
+namespace gfx {
+
+Polygon::Polygon(unsigned int dim) {
   dimensions = dim;
   init();
 }
-Polygon::Polygon(uint dim, vector<float> verts) {
+Polygon::Polygon(unsigned int dim, vector<float> verts) {
   dimensions = dim;
   vertexes = verts;
   init();
@@ -29,4 +31,6 @@ void Polygon::draw() {
   glVertexAttribPointer(a, dimensions, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(a);
   glDrawArrays(GL_TRIANGLES, 0, vertexes.size() / dimensions);
+}
+
 }

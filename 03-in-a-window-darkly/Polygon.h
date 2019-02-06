@@ -1,16 +1,18 @@
 #pragma once
-#include "Shader.h"
 #include <stdinc.h>
+#include "Shader.h"
 using namespace std;
+
+namespace gfx {
 
 class Polygon {
 public:
-  Polygon(uint dim);
-  Polygon(uint dim, vector<float> vertices);
+  Polygon(unsigned int dim);
+  Polygon(unsigned int dim, vector<float> vertices);
   ~Polygon();
 
   vector<float> vertexes;
-  uint dimensions;
+  unsigned int dimensions;
 
   GLuint vao;
   GLuint vbo;
@@ -24,3 +26,5 @@ public:
 private:
   void init();
 };
+
+}

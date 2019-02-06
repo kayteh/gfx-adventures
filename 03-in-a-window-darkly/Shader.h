@@ -16,9 +16,9 @@ public:
   void link();
   void use();
   void reset();
-  void bind(string uniformName, glm::vec4 v4);
-  void bind(string uniformName, glm::vec3 v3);
-  void bind(string uniformName, glm::float_t f);
+  // void bind(string uniformName, glm::vec4 v4);
+  // void bind(string uniformName, glm::vec3 v3);
+  // void bind(string uniformName, glm::float_t f);
 
   GLint uniform(string uniformName);
 

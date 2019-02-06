@@ -1,6 +1,7 @@
+#include <stdinc.h>
 #include "App.h"
 #include "Shader.h"
-#include <stdinc.h>
+#include "Polygon.h"
 
 #ifndef FIXED_UPDATE_DELTA
 #define FIXED_UPDATE_DELTA 16
@@ -120,6 +121,11 @@ void App::init() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   // glfwSetErrorCallback(utils::glfwError);
+  const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+  glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+  glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+  glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+  glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
   window = glfwCreateWindow(800, 600, WINDOW_TITLE, NULL, NULL);
   if (window == NULL) {
     std::cout << "Failed to create GLFW window" << std::endl;
@@ -128,6 +134,13 @@ void App::init() {
   }
   glfwMakeContextCurrent(window);
   D("createGLContext finished")
+
+
+  glfwSwapInterval(0);
+
+  // glEnable(GL_DEPTH_TEST);
+  // glEnable(GL_BLEND);
+  // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   // setup GLEW
   glewExperimental = GL_TRUE;
@@ -162,13 +175,14 @@ void App::reloadShaders() {
 
 void App::createEntities() {
   D("app - create entities")
-  for (uint i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; i++) {
     float o = 0.1 * i;
     auto p =
-        make_shared<Polygon>(2, vector<float>{0.0f + o, 0.5f + o, 0.5f + o,
+        make_shared<gfx::Polygon>(2, vector<float>{0.0f + o, 0.5f + o, 0.5f + o,
                                               -0.5f + o, -0.5f + o, -0.5f + o});
 
     p->shader = Shader::get("triangle");
-    entities.push_back(shared_ptr<Polygon>(p));
+    entities.push_back(shared_ptr<gfx::Polygon>(p));
   }
+
 }

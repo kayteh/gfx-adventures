@@ -1,8 +1,16 @@
 #pragma once
+#ifdef __WIN32__
+#define NOGDI
+#include <Windows.h>
+#endif
+
+#define GLM_FORCE_CXX17
+#include <glm/glm.hpp>
+
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+
 #include <chrono>
 #include <fstream>
 #include <iostream>
@@ -29,6 +37,8 @@ namespace fs = std::filesystem;
 
 #define SHADER_PATH "./shaders"
 #define SHADER_INCLUDES "../includes/"
+
+
 
 static std::chrono::high_resolution_clock cClock;
 static uint64_t ulFrameCounter = 0;

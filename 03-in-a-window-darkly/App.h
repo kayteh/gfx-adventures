@@ -1,7 +1,6 @@
 #pragma once
-#include "Polygon.h"
-#include "Shader.h"
 #include <stdinc.h>
+#include "Polygon.h"
 using namespace std;
 
 class App {
@@ -23,8 +22,5 @@ public:
   void createEntities();
 
 private:
-  vector<shared_ptr<Polygon>> entities;
-
-  friend class Shader;
-  friend class Polygon;
+  vector<shared_ptr<gfx::Polygon>> entities;
 };

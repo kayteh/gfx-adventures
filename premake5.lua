@@ -2,7 +2,7 @@
 
 workspace "GFXAdventures"
   configurations { "Debug", "Release" }
-  includedirs "./includes/**"
+  includedirs { "./includes" }
   targetname "main"
   cppdialect "C++17"
   
@@ -16,6 +16,11 @@ workspace "GFXAdventures"
     toolset "clang"
     -- buildoptions { "-std=c++17" }
     links { "stdc++fs" }
+
+  filter "system:Windows"
+	  libdirs { "./vendor/win32" }
+    links { "OpenGL32", "glfw3", "glew32s" }
+    defines { "__WIN32__" }
 
   filter "configurations:Debug"
     buildoptions { "-pedantic" }
