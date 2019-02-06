@@ -4,6 +4,7 @@ workspace "GFXAdventures"
   configurations { "Debug", "Release" }
   includedirs "./includes/**"
   targetname "main"
+  cppdialect "C++17"
   
   filter "system:Linux"
   links { "GL", "glfw", "GLEW" }
@@ -13,7 +14,7 @@ workspace "GFXAdventures"
   
   filter "system:Linux or Mac"
     toolset "clang"
-    buildoptions { "-std=c++17" }
+    -- buildoptions { "-std=c++17" }
     links { "stdc++fs" }
 
   filter "configurations:Debug"

@@ -6,11 +6,11 @@ probably only c++, probably only works on linux/mac for now. d3d is a goal but n
 
 ## building & running
 
-to build, you need premake4 and gnu make
+to build, you need premake5, clang 7+ (ideally,) and gnu make
 
 ```bash
 # generate the project (only need to run once)
-premake4 gmake
+premake5 gmake
 
 # build all
 make
@@ -49,7 +49,14 @@ editing a shader and pressing page up will reload them. press escape to exit.
 
 ### 02 Frameworks
 
-so now that i have legs, i may as well stretch my c++ knowledge a bit. probably going to start with makefiles (CMake or premake? idk. something, i know how painful makefiles are from experience.)
+so this is where i learned all about smart pointers, classes, and some other really dumb things about C++ that i was poisoned away from in C#/Go. eventually everything made sense, though, thanks to some friends. one of the same friends also introduced me to premake, which is the thing i've enjoyed most about this whole experience. 
 
-bumped opengl version to 4.1, this may make my linux VM salty but i have my mac for now. nbd. seemed to work, so continuing!
+i worked quite a bit on the shader system, i think it's the most perfect system i could have devised for myself. even got into preprocessing a little, i might dig deeper into that in the future, I all too much enjoy Unity's ShaderLab/HLSL stuff.
 
+i almost have full feature parity with 01, but i decided to take a detour to windows for 03, as all that's left is some weirdo shader things.
+
+this one also lost me a lot of sleep, accidentally got too far down the pointer rabbit hole.
+
+### 03 In a Window, Darkly.
+
+02's detour into making this system work on.. windows!
