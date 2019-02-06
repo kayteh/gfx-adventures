@@ -5,3 +5,5 @@ GFXAdventures\.sln
 *.vcxproj
 
 \.vs/
+
+*.user
