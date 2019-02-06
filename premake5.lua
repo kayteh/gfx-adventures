@@ -7,15 +7,15 @@ workspace "GFXAdventures"
   cppdialect "C++17"
   
   filter "system:Linux"
-  links { "GL", "glfw", "GLEW" }
+    links { "GL", "glfw", "GLEW", "stdc++fs" }
   
-  filter "system:Mac"
-  links { "OpenGL.framework", "glfw", "glew" }
+  filter "system:MacOSX"
+    links { "OpenGL.framework", "glfw", "glew", "c++fs" }
+    libdirs { "/usr/local/opt/llvm/lib" }
   
-  filter "system:Linux or Mac"
+  filter "system:Linux or MacOSX"
     toolset "clang"
     -- buildoptions { "-std=c++17" }
-    links { "stdc++fs" }
 
   filter "system:Windows"
 	  libdirs { "./vendor/win32" }
@@ -26,7 +26,7 @@ workspace "GFXAdventures"
     buildoptions { "-pedantic" }
     defines { "DEBUG" }
     symbols "On"
-    optimize "Off"
+    optimize "Debug"
     warnings "Extra"
 
   filter "configurations:Release"
