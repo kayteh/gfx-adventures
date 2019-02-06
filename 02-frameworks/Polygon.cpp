@@ -26,7 +26,7 @@ void Polygon::draw() {
   glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(float), & vertexes.front(), drawType);
   shader->use();
   GLint a = glGetAttribLocation(shader->program, "position");
-  glVertexAttribPointer(a, 2, GL_FLOAT, GL_FALSE, 0, 0);
+  glVertexAttribPointer(a, dimensions, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(a);
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glDrawArrays(GL_TRIANGLES, 0, vertexes.size() / dimensions);
 }

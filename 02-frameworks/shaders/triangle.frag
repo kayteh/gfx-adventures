@@ -1,8 +1,6 @@
 #version 150 core
 
-uniform vec4 u_Time;
-// uniform vec4 u_SinTime;
-// uniform float u_Position;
+#include "Common.glsl"
 
 out vec4 outColor;
 

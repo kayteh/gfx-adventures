@@ -9,9 +9,13 @@
 #include <list>
 #include <map>
 #include <math.h>
+#include <regex>
 #include <sstream>
 #include <thread>
 #include <vector>
+#include <filesystem>
+// #include <experimental/filesystem>
+namespace fs = std::filesystem;
 
 #ifdef DEBUG
 #define D(text) { std::cout << "DEBUG: " << text << endl; };
@@ -22,6 +26,9 @@
 #ifndef WINDOW_TITLE
 #define WINDOW_TITLE "GFX Adventures"
 #endif 
+
+#define SHADER_PATH "./shaders"
+#define SHADER_INCLUDES "../includes/"
 
 static std::chrono::high_resolution_clock cClock;
 static uint64_t ulFrameCounter = 0;

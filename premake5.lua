@@ -1,30 +1,29 @@
 #!lua
 
 workspace "GFXAdventures"
-  configurations { "Release", "Debug" }
+  configurations { "Debug", "Release" }
   includedirs "./includes/**"
   targetname "main"
-
-  filter "linux"
-    links { "GL", "glfw", "GLEW" }
   
-  filter "macosx"
-    links { "OpenGL.framework", "glfw", "glew" }
-
-  filter "linux or macosx"
+  filter "system:Linux"
+  links { "GL", "glfw", "GLEW" }
+  
+  filter "system:Mac"
+  links { "OpenGL.framework", "glfw", "glew" }
+  
+  filter "system:Linux or Mac"
     toolset "clang"
-    buildoptions { "-std=c++17", "-lstdc++fs" }
+    buildoptions { "-std=c++17" }
+    links { "stdc++fs" }
 
-  filter "Debug"
-    buildoptions { "-Wall", "-Wextra", "-pedantic" }
-
-  filter "Debug"
+  filter "configurations:Debug"
+    buildoptions { "-pedantic" }
     defines { "DEBUG" }
     symbols "On"
     optimize "Off"
+    warnings "Extra"
 
-
-  filter "Release"
+  filter "configurations:Release"
     defines { "NDEBUG" }
     optimize "On"
 

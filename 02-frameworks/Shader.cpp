@@ -64,6 +64,9 @@ void Shader::loadFile(string file) {
 
 void Shader::loadString(string shaderCode, int type) {
   D("shader load string")
+
+  preprocessGLSL(&shaderCode);
+
   GLuint part = glCreateShader(type);
   const char* code = shaderCode.c_str();
   glShaderSource(part, 1, &code, NULL);
@@ -98,4 +101,48 @@ void Shader::reset() {
   D("shader reset")
   parts.clear();
   linked = false;
+}
+
+static map<string, string> includeCache;
+static regex glslInclude("\\#include \"(.*)\"");
+void Shader::preprocessGLSL(string* code) {
+  D("preprocess")
+  // find includes
+  smatch directive;
+  
+  while(regex_search(*code, directive, glslInclude)) {
+    stringstream injectedCode;
+
+    string fileName = directive.str(1);
+
+    injectedCode << endl << "// INCLUDED FROM: " << fileName << endl;
+    if (includeCache.count(fileName) > 0) {
+      injectedCode << includeCache[fileName];
+    } else {
+      stringstream loadedCode;
+      auto pathname = fs::absolute(SHADER_PATH "/./" + fileName);
+      ifstream data;
+      data.open(pathname);
+      if (!data.is_open()) {
+        pathname = fs::absolute(SHADER_INCLUDES "/./" + fileName);
+        data.open(pathname);
+        if (!data.is_open()) {
+          cout << "WARNING: Shader include " << fileName << " wasn't found." << endl;
+          includeCache.insert_or_assign(fileName, "");
+          continue;
+        }
+      } 
+      loadedCode << data.rdbuf();
+      includeCache.insert_or_assign(fileName, loadedCode.str());
+      injectedCode << loadedCode.rdbuf();
+    }
+    injectedCode << endl << "// -- END " << fileName << endl;
+
+    code->replace(
+      directive.position(), 
+      directive.length(),
+      injectedCode.str().c_str()
+    );
+  }
+
 }

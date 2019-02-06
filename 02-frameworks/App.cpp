@@ -73,19 +73,19 @@ void App::mainLoop() {
     }
 
   }
-};
+}
 
 void App::earlyUpdate() {
   // D("app - early update")
   // tick over 
-};
+}
 
 void App::update() {
   // D("app - update")
   for (auto const& poly: entities) {
     poly->draw();
   }
-};
+}
 
 
 bool reloadDown = false;
@@ -106,11 +106,11 @@ void App::lateUpdate() {
   } else {
     reloadDown = false;
   }
-};
+}
 
 void App::fixedUpdate() {
   // D("app - fixed update")
-};
+}
 
 static GLuint vertexBuffer;
 void App::init() {
@@ -151,7 +151,7 @@ void App::init() {
   reloadShaders();
 
   createEntities();
-};
+}
 
 // shared_ptr<Shader> triangle;
 void App::reloadShaders() {
@@ -163,7 +163,7 @@ void App::reloadShaders() {
     sh->link();
     Shader::shaders.insert_or_assign(s.first, shared_ptr<Shader>(sh));
   }
-};
+}
 
 
 void App::createEntities() {

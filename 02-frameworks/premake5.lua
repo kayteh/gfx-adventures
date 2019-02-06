@@ -4,3 +4,4 @@ workspace "GFXAdventures"
     language "C++"
     includedirs "../includes"
     files { "**.h", "**.cpp" }
+    targetdir ".bin/"
