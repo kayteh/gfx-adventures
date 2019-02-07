@@ -1,11 +1,16 @@
 #!lua
 
 workspace "GFXAdventures"
-  configurations { "Debug", "Release" }
+  configurations { "Debug", "Release", "DebugShaders" }
   includedirs { "./includes" }
   targetname "main"
   cppdialect "C++17"
   
+  -- UNIXY STUFF
+  filter "system:Linux or MacOSX"
+    toolset "clang"
+    buildoptions { "-ffast-math" }
+
   filter "system:Linux"
     links { "GL", "glfw", "GLEW", "stdc++fs" }
     defines { "__LINUX__" }
@@ -15,24 +20,26 @@ workspace "GFXAdventures"
     libdirs { "/usr/local/opt/llvm/lib" }
     defines { "__APPLE__" }
   
-  filter "system:Linux or MacOSX"
-    toolset "clang"
-    buildoptions { "-pedantic" }
-
+  -- WINDOWSY STUFF
   filter "system:Windows"
     libdirs { "./vendor/win32" }
     links { "OpenGL32", "glfw3", "glew32s" }
     defines { "__WIN32__" }
-
-  filter "configurations:Debug"
+    
+  -- RELEASE STUFF
+  filter "configurations:Debug or DebugShaders"
     defines { "DEBUG" }
     symbols "On"
     optimize "Debug"
-    warnings "Extra"
+    -- warnings "Extra"
+    buildoptions { "-pedantic" }
 
   filter "configurations:Release"
     defines { "NDEBUG" }
     optimize "On"
+
+  filter "configurations:DebugShaders"
+    defines { "DEBUG_SHADERS" }
 
   project "GFXAdventures"
     kind "ConsoleApp"

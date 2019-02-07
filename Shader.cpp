@@ -16,7 +16,7 @@ int typeFromExt(string path) {
   }
 }
 
-void checkStatusPart(GLuint shaderPart) {
+bool checkStatusPart(GLuint shaderPart) {
   GLint status;
   char statusBuffer[512];
   glGetShaderiv(shaderPart, GL_COMPILE_STATUS, &status);
@@ -32,6 +32,12 @@ void checkStatusPart(GLuint shaderPart) {
 #ifdef NDEBUG
   }
 #endif
+
+  if (status != GL_TRUE) {
+    return false;
+  }
+
+  return true;
 }
 
 Shader::Shader() {
@@ -121,7 +127,8 @@ void Shader::reset() {
   linked = false;
 }
 
-static regex glslPragma("\\#pragma (\\bfragment|vertex\\b) ([a-zA-Z0-9_]+)");
+static regex glslPragmaFV("\\#pragma (\\bfragment|vertex\\b) ([a-zA-Z0-9_]+)");
+static regex glslPragmaVER("\\#pragma glsl ([0-9]+ ?[a-z]*)");
 map<int, string> Shader::preprocessGLSLPragma(string code) {
   D("preprocess #pragma")
   smatch directive;
@@ -132,14 +139,20 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
                             // technically speaking, we remove it after because 
                             // of the moving target it becomes.
 
+  string version = "#version ";
+  if (regex_search(code, directive, glslPragmaVER)) {
+    version.append(directive.str(1));
+  } else {
+    version.append(DEFAULT_GLSL_VERSION);
+  }
 
-  while (regex_search(code, directive, glslPragma)) {
+  while (regex_search(code, directive, glslPragmaFV)) {
     stringstream buffer;
     string arg1 = directive.str(1); // the type
     string arg2 = directive.str(2); // the function name
     bool ok = false;
     if (arg1.compare("vertex") == 0) {
-      buffer << "#version 150 core" << endl;
+      buffer << version << endl;
       buffer << code << endl;
       buffer << "// -- Generated Vertex" << endl;
       buffer << "void main() {"<< endl << "  " << arg2 << "(gl_Position);" << endl << "}";
@@ -147,10 +160,11 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
       precompiledShaders.insert_or_assign(GL_VERTEX_SHADER, buffer.str());
       ok = true;
     } else if (arg1.compare("fragment") == 0) {
-      buffer << "#version 150 core" << endl;
+      buffer << version << endl;
+      buffer << "out vec4 OUT_COLOR;" << endl;
       buffer << code << endl;
       buffer << "// -- Generated Fragment" << endl;
-      buffer << "void main() {"<< endl << "  " << arg2 << "();" << endl << "}";
+      buffer << "void main() {"<< endl << "  OUT_COLOR = " << arg2 << "();" << endl << "}";
 
       precompiledShaders.insert_or_assign(GL_FRAGMENT_SHADER, buffer.str());
       ok = true;

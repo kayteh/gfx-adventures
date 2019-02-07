@@ -32,6 +32,11 @@ Run:
 premake5 gmake2
 make -j
 .bin/main
+
+# -- alternative build configs --
+env config=debug ./run.sh        # (the default) a very verbose debugging mode w/ symbols.
+env config=debugshaders ./run.sh # to debug shader preprocessor/loader internals as well
+env config=release ./run.sh      # for no debugging at all. possibly faster.
 ```
 **Done.**
 
