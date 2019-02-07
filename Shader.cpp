@@ -25,8 +25,10 @@ void checkStatusPart(GLuint shaderPart) {
 #ifdef NDEBUG
   if (status != GL_TRUE) {
 #endif
+#if defined(NDEBUG) || defined(DEBUG_SHADERS)
     cout << "Shader Compile Log:" << endl;
     cout << statusBuffer << endl << endl;
+#endif
 #ifdef NDEBUG
   }
 #endif
@@ -56,9 +58,9 @@ void Shader::loadFile(string file) {
   stringstream code;
   if (fileStream.is_open()) {
     code << fileStream.rdbuf();
-// #ifdef DEBUG
-//     cout << "SHADER FILE: " << file.c_str() << endl;
-// #endif // DEBUG
+#ifdef DEBUG_SHADERS
+    cout << "SHADER FILE: " << file.c_str() << endl;
+#endif // DEBUG
     loadString(code.str(), typeFromExt(file));
   }
 }
@@ -137,7 +139,6 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
     string arg2 = directive.str(2); // the function name
     bool ok = false;
     if (arg1.compare("vertex") == 0) {
-      D("got vert")
       buffer << "#version 150 core" << endl;
       buffer << code << endl;
       buffer << "// -- Generated Vertex" << endl;
@@ -146,7 +147,6 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
       precompiledShaders.insert_or_assign(GL_VERTEX_SHADER, buffer.str());
       ok = true;
     } else if (arg1.compare("fragment") == 0) {
-      D("got frag")
       buffer << "#version 150 core" << endl;
       buffer << code << endl;
       buffer << "// -- Generated Fragment" << endl;
@@ -163,7 +163,7 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
     // and destroy the evidence.
     code.erase(directive.position(), directive.length());
 
-    #ifdef DEBUG
+    #ifdef DEBUG_SHADERS
     cout << "=== *** REMAINING SEARCH *** ===" << endl << code << endl << "=== *** END REMAINING SEARCH ***" << endl;
     #endif
   }
@@ -183,7 +183,7 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
 
     precompiledShaders[psc.first] = sh;
 
-    #ifdef DEBUG
+    #ifdef DEBUG_SHADERS
     cout << "=== *** PRECOMPILED ("<< psc.first <<") *** ===" << endl << sh << "=== *** END PRECOMPILED ("<< psc.first <<") ***" << endl;
     #endif
   }
@@ -194,7 +194,7 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
 static map<string, string> includeCache;
 static regex glslInclude("\\#include \"(.*)\"");
 void Shader::preprocessGLSLIncludes(string *code) {
-  D("preprocess #include")
+  // D("preprocess #include")
   // find includes
   smatch directive;
 
