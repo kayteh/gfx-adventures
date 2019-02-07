@@ -16,15 +16,13 @@ public:
   void link();
   void use();
   void reset();
-  // void bind(string uniformName, glm::vec4 v4);
-  // void bind(string uniformName, glm::vec3 v3);
-  // void bind(string uniformName, glm::float_t f);
+  void set(string uniformName, glm::vec4 v4);
+  void set(string uniformName, glm::vec3 v3);
+  void set(string uniformName, float f);
 
   GLint uniform(string uniformName);
 
-  void updateUniforms(
-      chrono::time_point<chrono::high_resolution_clock> lastFrame,
-      chrono::time_point<chrono::high_resolution_clock> currentFrame);
+  void updateUniformTime(map<string, glm::vec4> times);
 
   inline static shared_ptr<Shader> get(string name) { return shaders[name]; }
 
@@ -32,6 +30,9 @@ public:
   bool linked = false;
 
   static void preprocessGLSL(string *code);
+  static void
+  updateAllUniformTimes(chrono::time_point<chrono::high_resolution_clock> start,
+                        chrono::time_point<chrono::high_resolution_clock> cur);
 
 private:
   vector<GLuint> parts;

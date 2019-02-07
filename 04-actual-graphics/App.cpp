@@ -1,7 +1,7 @@
 #include <stdinc.h>
 #include "App.h"
 #include "Shader.h"
-#include "Polygon.h"
+#include "Geom.h"
 
 #ifndef FIXED_UPDATE_DELTA
 #define FIXED_UPDATE_DELTA 16
@@ -25,12 +25,14 @@ App::~App() {
 
 // chrono::steady_clock steadyClock;
 // chrono::high_resolution_clock hrClock;
+static chrono::time_point<chrono::high_resolution_clock> startTime;
 static chrono::time_point<chrono::high_resolution_clock> lastFixedUpdate;
 static chrono::time_point<chrono::high_resolution_clock> lastDrawTick;
 
 void App::mainLoop() {
   D("main loop fired")
   auto currentClock = chrono::high_resolution_clock::now();
+  startTime = currentClock;
   lastDrawTick = currentClock;
   lastFixedUpdate = currentClock;
   // this_thread::sleep_for(1s);
@@ -77,6 +79,8 @@ void App::mainLoop() {
 void App::earlyUpdate() {
   // D("app - early update")
   // tick over
+
+  Shader::updateAllUniformTimes(startTime, lastDrawTick);
 }
 
 void App::update() {
@@ -165,11 +169,16 @@ void App::init() {
 void App::reloadShaders() {
   D("app - reload shaders")
   for (auto const &s : shaders) {
-    auto sh = make_shared<Shader>();
-    sh->name = s.first;
+    shared_ptr<Shader> sh;
+    if (Shader::shaders.count(s.first) > 0) {
+      sh = Shader::shaders[s.first];
+    } else {
+      sh = make_shared<Shader>();
+      sh->name = s.first;
+      Shader::shaders.insert_or_assign(s.first, shared_ptr<Shader>(sh));
+    }
     sh->loadFiles(s.second);
     sh->link();
-    Shader::shaders.insert_or_assign(s.first, shared_ptr<Shader>(sh));
   }
 }
 
@@ -178,11 +187,21 @@ void App::createEntities() {
   for (unsigned int i = 0; i < 3; i++) {
     float o = 0.1 * i;
     auto p =
-        make_shared<gfx::Polygon>(2, vector<float>{0.0f + o, 0.5f + o, 0.5f + o,
-                                              -0.5f + o, -0.5f + o, -0.5f + o});
+        make_shared<Geom>(vector<float>{
+          -0.5f + o,  0.5f + o, 1.0f + o, // Top-left
+          0.5f + o,  0.5f + o, 0.0f + o, // Top-right
+          0.5f + o, -0.5f + o, 0.0f + o, // Bottom-right
+          -0.5f + o, -0.5f + o, 1.0f + o, // Bottom-left
+        }, vector<unsigned int>{
+          0, 1, 2,
+          2, 3, 0
+        });
 
     p->shader = Shader::get("triangle");
-    entities.push_back(shared_ptr<gfx::Polygon>(p));
+    p->setMaterialCallback([=](shared_ptr<Shader> shader) {
+      shader->set("u_Depth", o*3);
+    });
+    entities.push_back(shared_ptr<Geom>(p));
   }
 
 }

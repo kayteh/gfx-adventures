@@ -1,6 +1,6 @@
 #pragma once
 #include <stdinc.h>
-#include "Polygon.h"
+#include "Geom.h"
 using namespace std;
 
 class App {
@@ -22,5 +22,5 @@ public:
   void createEntities();
 
 private:
-  vector<shared_ptr<gfx::Polygon>> entities;
+  vector<shared_ptr<Geom>> entities;
 };

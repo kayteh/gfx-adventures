@@ -1,4 +1,5 @@
 #include "Shader.h"
+#include <glm/gtc/type_ptr.hpp>
 
 // OpenGL Shader Class Implementation
 int typeFromExt(string path) {
@@ -85,6 +86,7 @@ void Shader::loadString(string shaderCode, int type) {
 void Shader::link() {
   D("shader link")
   glLinkProgram(program);
+  uniforms.clear();
   linked = true;
 }
 
@@ -142,4 +144,51 @@ void Shader::preprocessGLSL(string *code) {
     code->replace(directive.position(), directive.length(),
                   injectedCode.str().c_str());
   }
+}
+
+GLint Shader::uniform(string uniformName) {
+  if (uniforms.count(uniformName) > 0) {
+    return uniforms[uniformName];
+  } else {
+    const char *n = uniformName.c_str();
+    GLint u = glGetUniformLocation(program, n);
+    uniforms.insert_or_assign(uniformName, u);
+    return u;
+  }
+}
+
+void Shader::updateUniformTime(map<string, glm::vec4> times) {
+  for (const auto &t : times) {
+    GLint i = uniform(t.first);
+    glUniform4fv(i, 1, glm::value_ptr(t.second));
+  }
+}
+
+void Shader::updateAllUniformTimes(
+    chrono::time_point<chrono::high_resolution_clock> start,
+    chrono::time_point<chrono::high_resolution_clock> cur) {
+  float t = chrono::duration_cast<chrono::milliseconds>(start - cur).count();
+  glm::vec4 u_Time(t / 20, t, t * 2, t * 3);
+  map<string, glm::vec4> times = {{"u_Time", u_Time},
+                                  {"u_SinTime", glm::sin(u_Time)},
+                                  {"u_CosTime", glm::cos(u_Time)}};
+
+  for (const auto &s : shaders) {
+    s.second->updateUniformTime(times);
+  }
+}
+
+void Shader::set(string uniformName, glm::vec4 v4) {
+  GLint u = uniform(uniformName);
+  glUniform4fv(u, 1, glm::value_ptr(v4));
+}
+
+void Shader::set(string uniformName, glm::vec3 v3) {
+  GLint u = uniform(uniformName);
+  glUniform3fv(u, 1, glm::value_ptr(v3));
+}
+
+void Shader::set(string uniformName, float f) {
+  GLint u = uniform(uniformName);
+  glUniform1f(u, f);
 }
