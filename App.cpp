@@ -12,7 +12,7 @@
 #endif
 
 map<string, vector<string>> shaders = {
-    {"triangle", {"shaders/triangle.frag", "shaders/triangle.vert"}},
+    //{"triangle", {"shaders/triangle.frag", "shaders/triangle.vert"}},
 };
 
 App::App() {}
@@ -180,6 +180,12 @@ void App::reloadShaders() {
     sh->loadFiles(s.second);
     sh->link();
   }
+
+  shared_ptr<Shader> sh = make_shared<Shader>();
+  sh->name = "triangle_combined";
+  sh->loadFileCombined("shaders/triangle_combined.glsl");
+  sh->link();
+  Shader::shaders.insert_or_assign(sh->name, shared_ptr<Shader>(sh));
 }
 
 void App::createEntities() {
@@ -197,7 +203,7 @@ void App::createEntities() {
           2, 3, 0
         });
 
-    p->shader = Shader::get("triangle");
+    p->shader = Shader::get("triangle_combined");
     p->setMaterialCallback([=](shared_ptr<Shader> shader) {
       shader->set("u_Depth", o*3);
     });

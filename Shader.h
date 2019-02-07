@@ -12,6 +12,7 @@ public:
 
   void loadFiles(vector<string> files);
   void loadFile(string file);
+  void loadFileCombined(string file);
   void loadString(string shaderCode, int type);
   void link();
   void use();
@@ -29,7 +30,8 @@ public:
   inline static map<string, shared_ptr<Shader>> shaders;
   bool linked = false;
 
-  static void preprocessGLSL(string *code);
+  map<int, string> preprocessGLSLPragma(string code);
+  void preprocessGLSLIncludes(string *code);
   static void
   updateAllUniformTimes(chrono::time_point<chrono::high_resolution_clock> start,
                         chrono::time_point<chrono::high_resolution_clock> cur);

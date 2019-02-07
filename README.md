@@ -1,6 +1,6 @@
 # GFX Adventures
 
-this repo is a collection of how i'm learning graphics, straight into the deep end.
+this repo is a collection of how i'm learning graphics, straight into the deep end. i'm a bit of an aspiring technical artist at this point and Unity's ShaderLab has given me almost too much niceties I'm rebuilding here.. probably too much.
 
 i'll probably stick to c++ the whole time. sorta tested cross platform but not really, 100% windows and mac, though.
 
@@ -51,6 +51,11 @@ make -j
 - [ ] OpenVR
 - [ ] direct3d
 - [ ] vulkan
+
+## some cool things
+
+- `#include` directive in GLSL
+- `#pragma vertex/fragment/etc` from ShaderLab
 
 ## chapters/diary
 
