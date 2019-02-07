@@ -36,7 +36,7 @@ namespace fs = std::filesystem;
 #endif 
 
 #define SHADER_PATH "./shaders"
-#define SHADER_INCLUDES "../includes/"
+#define SHADER_INCLUDES "./includes/"
 
 
 
