@@ -1,0 +1,3 @@
+includes/GL/* linguist-vendored
+includes/GLFW/* linguist-vendored
+includes/glm/* linguist-vendored
