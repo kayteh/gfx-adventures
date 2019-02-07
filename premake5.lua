@@ -34,9 +34,11 @@ workspace "GFXAdventures"
     defines { "NDEBUG" }
     optimize "On"
 
-  projects = os.matchfiles("./**/premake5.lua")
-  for _,path in pairs(projects) do
-    dofile (path)
-  end
+  project "GFXAdventures"
+    kind "ConsoleApp"
+    language "C++"
+    includedirs "./includes"
+    files { "**.h", "**.cpp" }
+    targetdir ".bin/"
 
   

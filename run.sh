@@ -1,4 +1,3 @@
 #!/bin/bash
 
-(cd .. && premake5 gmake)
-make -j && .bin/main "$@"
+premake5 gmake2 && make -j && .bin/main "$@"
