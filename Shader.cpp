@@ -122,7 +122,8 @@ void Shader::use() {
 
 void Shader::reset() {
   D("shader reset")
-  parts.clear();
+  glDeleteProgram(program);
+  program = glCreateProgram();
   linked = false;
 }
 
