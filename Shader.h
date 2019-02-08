@@ -2,6 +2,13 @@
 #include <stdinc.h>
 using namespace std;
 
+#ifdef DEBUG_SHADERS
+#define DS(text)                                                               \
+  { std::cout << "DEBUG: " << text << std::endl; };
+#else
+#define DS(t) {};
+#endif
+
 class Shader {
 public:
   Shader();
@@ -37,6 +44,5 @@ public:
                         chrono::time_point<chrono::high_resolution_clock> cur);
 
 private:
-  vector<GLuint> parts;
   map<string, GLint> uniforms;
 };
