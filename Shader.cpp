@@ -41,25 +41,24 @@ bool checkStatusPart(GLuint shaderPart) {
 }
 
 Shader::Shader() {
-  D("shader constructor")
-  program = glCreateProgram();
+  DS("shader constructor")
+  reset();
 }
 
 Shader::~Shader() {
-  D("shader deconstructor")
+  DS("shader deconstructor")
   glDeleteProgram(program);
-  shaders.erase(name);
 }
 
 void Shader::loadFiles(vector<string> files) {
-  D("shader load files")
+  DS("shader load files")
   for (auto const &file : files) {
     loadFile(file);
   }
 }
 
 void Shader::loadFile(string file) {
-  D("shader load file")
+  DS("shader load file")
   ifstream fileStream(file);
   stringstream code;
   if (fileStream.is_open()) {
@@ -72,21 +71,21 @@ void Shader::loadFile(string file) {
 }
 
 void Shader::loadFileCombined(string file) {
-  D("shader load combined file")
+  DS("shader load combined file")
   ifstream fileStream(file);
   stringstream code;
   if (fileStream.is_open()) {
     code << fileStream.rdbuf();
     map<int, string> splitShaders = preprocessGLSLPragma(code.str());
 
-    for (const auto& c: splitShaders) {
+    for (const auto &c : splitShaders) {
       loadString(c.second, c.first);
     }
   }
 }
 
 void Shader::loadString(string shaderCode, int type) {
-  D("shader load string")
+  DS("shader load string")
 
   preprocessGLSLIncludes(&shaderCode);
 
@@ -106,14 +105,14 @@ void Shader::loadString(string shaderCode, int type) {
 }
 
 void Shader::link() {
-  D("shader link")
+  DS("shader link")
   glLinkProgram(program);
   uniforms.clear();
   linked = true;
 }
 
 void Shader::use() {
-  // D("shader use")
+  // DS("shader use")
   if (linked == false) {
     link();
   }
@@ -130,14 +129,14 @@ void Shader::reset() {
 static regex glslPragmaFV("\\#pragma (\\bfragment|vertex\\b) ([a-zA-Z0-9_]+)");
 static regex glslPragmaVER("\\#pragma glsl ([0-9]+ ?[a-z]*)");
 map<int, string> Shader::preprocessGLSLPragma(string code) {
-  D("preprocess #pragma")
+  DS("preprocess #pragma")
   smatch directive;
 
   map<int, string> precompiledShaders; // GLint mapped to a shader string.
 
-  vector<string> toRemove;  // matched strings that we need to remove afterwards.
-                            // technically speaking, we remove it after because 
-                            // of the moving target it becomes.
+  vector<string> toRemove; // matched strings that we need to remove afterwards.
+                           // technically speaking, we remove it after because
+                           // of the moving target it becomes.
 
   string version = "#version ";
   if (regex_search(code, directive, glslPragmaVER)) {
@@ -155,7 +154,9 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
       buffer << version << endl;
       buffer << code << endl;
       buffer << "// -- Generated Vertex" << endl;
-      buffer << "void main() {"<< endl << "  " << arg2 << "(gl_Position);" << endl << "}";
+      buffer << "void main() {" << endl
+             << "  " << arg2 << "(gl_Position);" << endl
+             << "}";
 
       precompiledShaders.insert_or_assign(GL_VERTEX_SHADER, buffer.str());
       ok = true;
@@ -164,7 +165,9 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
       buffer << "out vec4 OUT_COLOR;" << endl;
       buffer << code << endl;
       buffer << "// -- Generated Fragment" << endl;
-      buffer << "void main() {"<< endl << "  OUT_COLOR = " << arg2 << "();" << endl << "}";
+      buffer << "void main() {" << endl
+             << "  OUT_COLOR = " << arg2 << "();" << endl
+             << "}";
 
       precompiledShaders.insert_or_assign(GL_FRAGMENT_SHADER, buffer.str());
       ok = true;
@@ -177,15 +180,17 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
     // and destroy the evidence.
     code.erase(directive.position(), directive.length());
 
-    #ifdef DEBUG_SHADERS
-    cout << "=== *** REMAINING SEARCH *** ===" << endl << code << endl << "=== *** END REMAINING SEARCH ***" << endl;
-    #endif
+#ifdef DEBUG_SHADERS
+    cout << "=== *** REMAINING SEARCH *** ===" << endl
+         << code << endl
+         << "=== *** END REMAINING SEARCH ***" << endl;
+#endif
   }
 
-  for (const auto& psc: precompiledShaders) {
+  for (const auto &psc : precompiledShaders) {
     string sh = psc.second;
 
-    for (const auto& rem: toRemove) {
+    for (const auto &rem : toRemove) {
       size_t pos = sh.find(rem);
 
       if (pos == string::npos) { // don't do stuff if it's already gone.
@@ -197,9 +202,10 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
 
     precompiledShaders[psc.first] = sh;
 
-    #ifdef DEBUG_SHADERS
-    cout << "=== *** PRECOMPILED ("<< psc.first <<") *** ===" << endl << sh << "=== *** END PRECOMPILED ("<< psc.first <<") ***" << endl;
-    #endif
+#ifdef DEBUG_SHADERS
+    cout << "=== *** PRECOMPILED (" << psc.first << ") *** ===" << endl
+         << sh << "=== *** END PRECOMPILED (" << psc.first << ") ***" << endl;
+#endif
   }
 
   return precompiledShaders;
@@ -208,7 +214,7 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
 static map<string, string> includeCache;
 static regex glslInclude("\\#include \"(.*)\"");
 void Shader::preprocessGLSLIncludes(string *code) {
-  // D("preprocess #include")
+  DS("preprocess #include")
   // find includes
   smatch directive;
 
