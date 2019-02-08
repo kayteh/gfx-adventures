@@ -48,6 +48,8 @@ void App::mainLoop() {
 
   // D("main loop prewarmed")
   while (!glfwWindowShouldClose(window)) {
+    glClear(GL_COLOR_BUFFER_BIT);
+
     // D("loop")
     currentClock = chrono::high_resolution_clock::now(); //
 
@@ -79,13 +81,15 @@ void App::mainLoop() {
       //   std::endl; glfwSetWindowShouldClose(window, GL_TRUE); exit(50);
       // }
     } else {
-      float a = (chrono::duration_cast<chrono::milliseconds>(maxFps - drawUpdateDiff)).count();
-      float b = (chrono::duration_cast<chrono::milliseconds>(fixedUpdateDelta - fixedUpdateDiff)).count();
+      std::chrono::duration<float, std::milli> a = maxFps - drawUpdateDiff;
+      std::chrono::duration<float, std::milli> b =
+          fixedUpdateDelta - fixedUpdateDiff;
 
-      float waitTime = min(a, b);
+      float waitTime = min(a.count(), b.count());
 
       // if there wasn't a draw, let's tap the thread for a ms to prevent
-      this_thread::sleep_for(chrono::duration_cast<chrono::milliseconds>(float));
+      this_thread::sleep_for(
+          std::chrono::duration<float, std::milli>(waitTime));
     }
 
     updateWindowTitle(window);
