@@ -17,7 +17,7 @@ public:
   void fixedUpdate();
 
   void init();
-  void reloadShaders();
+  static void reloadShaders();
 
   void createEntities();
 
