@@ -13,9 +13,10 @@
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": true,
+            "externalConsole": false,
             "MIMode": "lldb",
             "preLaunchTask": "build (debug)",
+            "internalConsoleOptions": "openOnSessionStart",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",

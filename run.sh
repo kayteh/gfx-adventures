@@ -1,3 +1,8 @@
 #!/bin/bash
 
-premake5 gmake2 && make -j && (test $SKIP_RUN -z && .bin/main "$@")
+set -e
+premake5 gmake2
+make -j
+test -z "$SKIP_RUN" && .bin/main "$@"
+
+exit 0
