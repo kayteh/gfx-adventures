@@ -26,14 +26,15 @@
 namespace fs = std::filesystem;
 
 #ifdef DEBUG
-#define D(text) { std::cout << "DEBUG: " << text << endl; };
+#define D(text)                                                                \
+  { std::cout << "DEBUG: " << text << std::endl; };
 #else
 #define D(t) {};
 #endif
 
 #ifndef WINDOW_TITLE
 #define WINDOW_TITLE "GFX Adventures"
-#endif 
+#endif
 
 #define SHADER_PATH "./shaders"
 #define SHADER_INCLUDES "./includes/"
@@ -45,24 +46,22 @@ namespace fs = std::filesystem;
 static std::chrono::high_resolution_clock cClock;
 static uint64_t ulFrameCounter = 0;
 static uint64_t ulFixedUpdateCounter = 0;
-static std::chrono::time_point tLast = cClock.now();
+static std::chrono::time_point<std::chrono::high_resolution_clock> tLast =
+    cClock.now();
 static std::string sTitle = WINDOW_TITLE;
-inline void updateWindowTitle(GLFWwindow* window) {
+inline void updateWindowTitle(GLFWwindow *window) {
   if (cClock.now() - tLast >= std::chrono::seconds(1)) {
     std::stringstream title;
-    title << sTitle << " [ FPS: " << ulFrameCounter << " ] [ FUT: " << ulFixedUpdateCounter << " ]";
+    title << sTitle << " [ FPS: " << ulFrameCounter
+          << " ] [ FUT: " << ulFixedUpdateCounter << " ]";
     glfwSetWindowTitle(window, title.str().c_str());
     ulFrameCounter = 0;
     ulFixedUpdateCounter = 0;
     tLast = cClock.now();
   }
 }
-inline void setWindowFixedUpdate() {
-  ulFixedUpdateCounter += 1;
-}
-inline void setWindowFPS() {
-  ulFrameCounter += 1;
-}
+inline void setWindowFixedUpdate() { ulFixedUpdateCounter += 1; }
+inline void setWindowFPS() { ulFrameCounter += 1; }
 
 #ifdef __APPLE__
 static bool macMoved = false;
@@ -75,5 +74,6 @@ inline void fix_render_on_mac(GLFWwindow *window) {
   }
 }
 #else
-#define fix_render_on_mac(w) {}
+#define fix_render_on_mac(w)                                                   \
+  {}
 #endif
