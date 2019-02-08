@@ -1,4 +1,5 @@
 #include <stdinc.h>
+#include <deferrable.h>
 #include "App.h"
 #include "Shader.h"
 #include "Geom.h"
@@ -92,9 +93,7 @@ void App::mainLoop() {
 }
 
 void App::earlyUpdate() {
-  // D("app - early update")
-  // tick over
-
+  deferrable::tick();
   Shader::updateAllUniformTimes(startTime, lastDrawTick);
 }
 
@@ -174,12 +173,12 @@ void App::init() {
   glClearColor(0.f, 0.f, 0.f, 1.f);
 
   // setup shaders, entities
-  this_thread::sleep_for(0.01s);
   // auto es = make_shared<Shader>();
   // es->name = "@internal/error";
   // es->loadFileCombined("shader/err.glsl");
   // Shader::errorShader = es;
 
+  deferrable::defer p([] { glClearColor(1.f, 0.f, 0.5f, 1.f); }, 5s);
 
   reloadShaders();
 
