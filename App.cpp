@@ -21,7 +21,7 @@ App::App() {}
 App::~App() {
   D("APP DECONST")
   entities.clear();
-  Shader::shaders.clear();
+  // Shader::shaders.clear();
   glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
@@ -34,7 +34,8 @@ const auto fixedUpdateDelta = chrono::milliseconds(FIXED_UPDATE_DELTA);
 const auto maxFps = chrono::milliseconds(1000 / MAX_FPS);
 void App::mainLoop() {
   D("main loop fired")
-  chrono::time_point<chrono::high_resolution_clock> currentClock = chrono::high_resolution_clock::now();
+  chrono::time_point<chrono::high_resolution_clock> currentClock =
+      chrono::high_resolution_clock::now();
   startTime = currentClock;
   lastDrawTick = currentClock;
   lastFixedUpdate = currentClock;
@@ -143,7 +144,7 @@ void App::init() {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   // glfwSetErrorCallback(utils::glfwError);
-  const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+  const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
   glfwWindowHint(GLFW_RED_BITS, mode->redBits);
   glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
   glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
@@ -214,14 +215,14 @@ void App::createEntities() {
   D("app - create entities")
   for (unsigned int i = 0; i < 3; i++) {
     float o = 0.1 * i;
-    auto p =
-        make_shared<Geom>(vector<float>{
-          -0.5f + o,  0.5f + o, 1.0f + o, // Top-left
-          0.5f + o,  0.5f + o, 0.0f + o, // Top-right
-          0.5f + o, -0.5f + o, 0.0f + o, // Bottom-right
-          -0.5f + o, -0.5f + o, 1.0f + o, // Bottom-left
+    auto p = make_shared<Geom>(
+        vector<float>{
+            -0.5f + o, 0.5f + o, 1.0f + o,  // Top-left
+            0.5f + o, 0.5f + o, 0.0f + o,   // Top-right
+            0.5f + o, -0.5f + o, 0.0f + o,  // Bottom-right
+            -0.5f + o, -0.5f + o, 1.0f + o, // Bottom-left
         }, vector<unsigned int>{
-          0, 1, 2,
+        vector<unsigned int>{0, 1, 2, 2, 3, 0});
           2, 3, 0
         });
 
