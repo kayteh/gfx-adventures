@@ -16,7 +16,10 @@ this project is organized into chapters/branches, with master being the current 
 - *(mac)* - macOS SDK Headers (if they are missing, [read](https://donatstudios.com/MojaveMissingHeaderFiles))
 - *(windows)* - visual studio 2017
 
-**Windows**  
+### Windows 
+
+#### Visual Studio 2017
+
 Run:
 ```ps1
 premake5 vs2017
@@ -24,7 +27,27 @@ premake5 vs2017
 ```
 Click Run/Debug, **Done.**
 
-**Mac/Linux**  
+#### VS2017 Developer Console
+
+```ps1
+run.bat
+# which is equivalent to
+premake5 vs2017
+msbuild
+.\.bin\main.exe
+```
+
+\**for VSCode, you can add this to workspace config to launch Dev Console in the integrated terminal*
+```json
+    "terminal.integrated.shell.windows": "C:\\Windows\\System32\\cmd.exe",
+    "terminal.integrated.shellArgs.windows": [
+        "/k", "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"
+    ]
+```
+
+Full VSCode tooling is provided as well, please tweak to your liking.
+
+### Mac & Linux 
 Run:
 ```bash
 ./run.sh
@@ -39,6 +62,9 @@ env config=debugshaders ./run.sh # to debug shader preprocessor/loader internals
 env config=release ./run.sh      # for no debugging at all. possibly faster.
 ```
 **Done.**
+
+Full VSCode tooling is provided as well, please tweak to your liking.
+
 
 ## todo
 
