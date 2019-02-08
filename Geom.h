@@ -15,14 +15,14 @@ public:
   GLuint vbo;
   GLuint ebo;
 
-  shared_ptr<Shader> shader;
+  string shaderName;
   // Shader shader;
   GLint drawType = GL_STATIC_DRAW;
 
   void bufferElements();
   void bufferVertexes();
-  void bufferVertexPosition();
-  
+  void bufferVertexPosition(shared_ptr<Shader> shader);
+
   void draw();
 
   void setMaterialCallback(std::function<void(shared_ptr<Shader>)> matcb) {
@@ -33,13 +33,13 @@ public:
 private:
   void init();
 
-  void callMaterial() {
-    if (!materialCallbackSet) return;
+  void callMaterial(shared_ptr<Shader> shader) {
+    if (!materialCallbackSet)
+      return;
 
     materialCallback(shader);
   };
-  
+
   bool materialCallbackSet = false;
   std::function<void(shared_ptr<Shader>)> materialCallback;
 };
-

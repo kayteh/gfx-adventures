@@ -39,7 +39,6 @@ void App::mainLoop() {
   startTime = currentClock;
   lastDrawTick = currentClock;
   lastFixedUpdate = currentClock;
-  // this_thread::sleep_for(1s);
 
   cout << "TIMINGS: max fps = " << MAX_FPS << " (" << 1000 / MAX_FPS
        << "ms); fixed delta time = " << FIXED_UPDATE_DELTA << "ms" << endl;
@@ -158,7 +157,6 @@ void App::init() {
   glfwMakeContextCurrent(window);
   D("createGLContext finished")
 
-
   glfwSwapInterval(1);
 
   // glEnable(GL_DEPTH_TEST);
@@ -195,19 +193,24 @@ void App::reloadShaders() {
   D("app - reload shaders")
   for (auto const &s : shaders) {
     shared_ptr<Shader> sh;
-    if (Shader::shaders.count(s.first) > 0) {
-      sh = Shader::shaders[s.first];
+    string n = s.first;
+    if (Shader::shaders.find(n) != Shader::shaders.end()) {
+      D("reload -- found existing")
+      sh = Shader::shaders[n];
+      sh->reset();
     } else {
+      D("reload -- creating new")
       sh = make_shared<Shader>();
-      sh->name = s.first;
-      Shader::shaders.insert_or_assign(s.first, shared_ptr<Shader>(sh));
+      sh->name = n;
     }
+
     if (s.second.size() == 1) {
       sh->loadFileCombined(s.second[0]);
     } else {
       sh->loadFiles(s.second);
     }
     sh->link();
+    Shader::shaders.insert_or_assign(n, sh);
   }
 }
 
@@ -221,16 +224,12 @@ void App::createEntities() {
             0.5f + o, 0.5f + o, 0.0f + o,   // Top-right
             0.5f + o, -0.5f + o, 0.0f + o,  // Bottom-right
             -0.5f + o, -0.5f + o, 1.0f + o, // Bottom-left
-        }, vector<unsigned int>{
+        },
         vector<unsigned int>{0, 1, 2, 2, 3, 0});
-          2, 3, 0
-        });
 
-    p->shader = Shader::get("triangle_combined");
-    p->setMaterialCallback([=](shared_ptr<Shader> shader) {
-      shader->set("u_Depth", o*3);
-    });
-    entities.push_back(shared_ptr<Geom>(p));
+    p->shaderName = "triangle_combined";
+    p->setMaterialCallback([o](auto shader) { shader->set("u_Depth", o * 3); });
+
+    entities.push_back(p);
   }
-
 }

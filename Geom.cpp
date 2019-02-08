@@ -27,7 +27,7 @@ void Geom::bufferVertexes() {
                &vertexes.front(), drawType);
 }
 
-void Geom::bufferVertexPosition() {
+void Geom::bufferVertexPosition(shared_ptr<Shader> shader) {
   GLint a = glGetAttribLocation(shader->program, "position");
   glVertexAttribPointer(a, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(a);
@@ -38,9 +38,11 @@ void Geom::draw() {
   bufferElements();
   bufferVertexes();
 
+  auto shader = Shader::get(shaderName);
   shader->use();
-  bufferVertexPosition();
+  bufferVertexPosition(shader);
 
-  callMaterial();
+  callMaterial(shader);
+
   glDrawElements(GL_TRIANGLES, elements.size(), GL_UNSIGNED_INT, 0);
 }

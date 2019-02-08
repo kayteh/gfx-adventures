@@ -18,4 +18,5 @@ vec4 frag() {
   );
 
   return vec4(sinTime, 1.0);
+  // return vec4(1.0, 1.0, 1.0, 1.0);
 }
