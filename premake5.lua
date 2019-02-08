@@ -25,14 +25,13 @@ workspace "GFXAdventures"
     libdirs { "./vendor/win32" }
     links { "OpenGL32", "glfw3", "glew32s" }
     defines { "__WIN32__" }
+    buildoptions { "/fp:fast" }
     
   -- RELEASE STUFF
   filter "configurations:Debug or DebugShaders"
     defines { "DEBUG" }
     symbols "On"
     optimize "Debug"
-    -- warnings "Extra"
-    buildoptions { "-pedantic" }
 
   filter "configurations:Release"
     defines { "NDEBUG" }
