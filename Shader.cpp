@@ -1,5 +1,7 @@
 #include "Shader.h"
 #include <glm/gtc/type_ptr.hpp>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 // OpenGL Shader Class Implementation
 int typeFromExt(string path) {

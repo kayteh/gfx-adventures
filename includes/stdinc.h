@@ -21,9 +21,6 @@
 #include <sstream>
 #include <thread>
 #include <vector>
-#include <filesystem>
-// #include <experimental/filesystem>
-namespace fs = std::filesystem;
 
 #ifdef DEBUG
 #define D(text)                                                                \
