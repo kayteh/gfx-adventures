@@ -42,7 +42,7 @@ void App::init() {
   // es->loadFileCombined("shader/err.glsl");
   // Shader::errorShader = es;
 
-  deferrable::defer p([] { glClearColor(1.f, 0.f, 0.5f, 1.f); }, 5s);
+  // deferrable::defer p([] { glClearColor(1.f, 0.f, 0.5f, 1.f); }, 5s);
 
   reloadShaders();
 
