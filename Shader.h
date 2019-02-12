@@ -1,3 +1,9 @@
+// See shaders/triangle_combined.shader for example
+// of how this loader works.
+//
+// I took a lot of inspiration from Unity but
+// I think I took a smarter path in code generation.
+
 #pragma once
 #include <stdinc.h>
 using namespace std;

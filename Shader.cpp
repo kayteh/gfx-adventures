@@ -155,6 +155,7 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
     bool ok = false;
     if (arg1.compare("vertex") == 0) {
       buffer << version << endl;
+      buffer << "#define VERTEX" << endl;
       buffer << code << endl;
       buffer << "// -- Generated Vertex" << endl;
       buffer << "void main() {" << endl
@@ -165,6 +166,7 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
       ok = true;
     } else if (arg1.compare("fragment") == 0) {
       buffer << version << endl;
+      buffer << "#define FRAGMENT" << endl;
       buffer << "out vec4 OUT_COLOR;" << endl;
       buffer << code << endl;
       buffer << "// -- Generated Fragment" << endl;

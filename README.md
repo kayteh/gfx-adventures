@@ -88,6 +88,8 @@ Full VSCode tooling is provided as well, please tweak to your liking.
 - `#include` directive in GLSL
 - `#pragma vertex/fragment/etc` from ShaderLab
 
+See `shaders/triangle_combined.glsl` for a full rundown.
+
 ## chapters/diary
 
 ### 01 A Beginning
