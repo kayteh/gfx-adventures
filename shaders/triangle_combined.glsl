@@ -24,14 +24,16 @@
  *  that calls the pragma defined functions, with a special
  *  signature.
  *
- * Fragment function is: vec4 function(); which returns the out color
+ * Fragment function is: vec4 function(T[, bool]); which returns the out color
  *  Similar to HLSL's `: COLOR' return directive. This is passed into
- *  an `out' field.
- * Vertex function is: void vert(inout vec4 pos); which pos is passed 
+ *  an `out' field. Optional bool is for facing/VFACE.
+ * Vertex function is: T vert(inout vec4 pos); which pos is passed 
  *  directly to gl_Position. Other gl_* can be used with a guard.
+ * T in both of these must be a struct. void may be possible in the future.
  *
  * I find that having an `in' global directive in the fragment doesn't
  *  actually affect anything, and I assume it gets compiled out.
+ *  but vert to frag ins/outs are VERY specific.
  *
  * Two guards are used for anything the compiler doesn't like,
  *  VERTEX and FRAGMENT which are defined directly after #version
@@ -56,7 +58,6 @@ v2f vert(inout vec4 pos) {
   i.uv0 = in_Texcoord0;
   return i;
 }
-
 
 vec4 frag(v2f i, bool vface) {
   vec3 sinTime = vec3(
