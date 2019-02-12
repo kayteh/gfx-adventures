@@ -97,9 +97,10 @@ void Shader::loadString(string shaderCode, int type) {
   glCompileShader(part);
   checkStatusPart(part);
 
-  // #ifdef DEBUG
-  // cout << "SHADER CODE: ---" << endl << code << endl;
-  // #endif // DEBUG
+#ifdef DEBUG_SHADERS
+  cout << code << endl << endl;
+
+#endif // DEBUG
 
   // commit and delete
   glAttachShader(program, part);
@@ -129,8 +130,42 @@ void Shader::reset() {
   linked = false;
 }
 
-static regex glslPragmaFV("\\#pragma (\\bfragment|vertex\\b) ([a-zA-Z0-9_]+)");
-static regex glslPragmaVER("\\#pragma glsl ([0-9]+ ?[a-z]*)");
+string _renderVert(string version, string code, string func, string typeName) {
+  stringstream buffer;
+  buffer << version << endl;
+  buffer << "#define VERTEX" << endl;
+  buffer << code << endl;
+  buffer << "// -- Generated Vertex" << endl;
+  buffer << "out " << typeName << " _VERT2FRAG;" << endl;
+  buffer << "void main() {" << endl
+        //  << "  " << typeName << " _VERT2FRAG;" << endl
+         << "  _VERT2FRAG = " << func << "(gl_Position);" << endl
+         << "}";
+
+  return buffer.str();
+}
+
+string _renderFrag(string version, string code, string func, string typeName, bool vface) {
+  stringstream buffer;
+  buffer << version << endl;
+  buffer << "#define FRAGMENT" << endl;
+  buffer << "out vec4 OUT_COLOR;" << endl;
+  buffer << code << endl;
+  buffer << "// -- Generated Fragment" << endl;
+  buffer << "in " << typeName << " _VERT2FRAG;" << endl;
+  buffer << "void main() {" << endl;
+  if (vface) {
+    buffer << "  OUT_COLOR = " << func << "(_VERT2FRAG, gl_FrontFacing);" << endl;
+  } else {
+    buffer << "  OUT_COLOR = " << func << "(_VERT2FRAG);" << endl;
+  }
+  buffer << "}" << endl;
+  return buffer.str();
+}
+
+static regex
+    glslPragmaFV("\n\\#pragma (\\bfragment|vertex\\b) ([a-zA-Z0-9_]+)");
+static regex glslPragmaVER("\n\\#pragma glsl ([0-9]+ ?[a-z]*)");
 map<int, string> Shader::preprocessGLSLPragma(string code) {
   DS("preprocess #pragma")
   smatch directive;
@@ -148,33 +183,44 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
     version.append(DEFAULT_GLSL_VERSION);
   }
 
+  string vertFunc;
+  string vertType;
+  string fragFunc;
+  bool fragVface;
+
   while (regex_search(code, directive, glslPragmaFV)) {
     stringstream buffer;
     string arg1 = directive.str(1); // the type
     string arg2 = directive.str(2); // the function name
     bool ok = false;
     if (arg1.compare("vertex") == 0) {
-      buffer << version << endl;
-      buffer << "#define VERTEX" << endl;
-      buffer << code << endl;
-      buffer << "// -- Generated Vertex" << endl;
-      buffer << "void main() {" << endl
-             << "  " << arg2 << "(gl_Position);" << endl
-             << "}";
+      regex vertOutputType("\n\\s*([a-zA-Z0-9_]+)\\s+" + arg2 + "\\s*\\(");
+      smatch typeName;
+      regex_search(code, typeName, vertOutputType);
+      vertFunc = arg2;
+      vertType = typeName.str(1);
 
-      precompiledShaders.insert_or_assign(GL_VERTEX_SHADER, buffer.str());
+      // buffer << version << endl;
+      // buffer << "#define VERTEX" << endl;
+      // buffer << code << endl;
+      // buffer << "// -- Generated Vertex" << endl;
+      // buffer << "void main() {" << endl
+      //        << "  " << arg2 << "(gl_Position);" << endl
+      //        << "}";
+
+      // precompiledShaders.insert_or_assign(GL_VERTEX_SHADER, buffer.str());
       ok = true;
     } else if (arg1.compare("fragment") == 0) {
-      buffer << version << endl;
-      buffer << "#define FRAGMENT" << endl;
-      buffer << "out vec4 OUT_COLOR;" << endl;
-      buffer << code << endl;
-      buffer << "// -- Generated Fragment" << endl;
-      buffer << "void main() {" << endl
-             << "  OUT_COLOR = " << arg2 << "();" << endl
-             << "}";
+      fragFunc = arg2;
 
-      precompiledShaders.insert_or_assign(GL_FRAGMENT_SHADER, buffer.str());
+      regex fragVfaceDetect(" " + arg2 + "\\s*\\([^,{]+\\)");
+      smatch typeName;
+      regex_search(code, typeName, fragVfaceDetect);
+      fragVface = typeName.size() == 0;
+
+      cout << "match:" << typeName.str(0) << endl;
+      cout << typeName.str(1) << "<==" << endl;
+
       ok = true;
     }
 
@@ -185,39 +231,23 @@ map<int, string> Shader::preprocessGLSLPragma(string code) {
     // and destroy the evidence.
     code.erase(directive.position(), directive.length());
 
-#ifdef DEBUG_SHADERS
-    cout << "=== *** REMAINING SEARCH *** ===" << endl
-         << code << endl
-         << "=== *** END REMAINING SEARCH ***" << endl;
-#endif
+    // #ifdef DEBUG_SHADERS
+    //     cout << "=== *** REMAINING SEARCH *** ===" << endl
+    //          << code << endl
+    //          << "=== *** END REMAINING SEARCH ***" << endl;
+    // #endif
   }
 
-  for (const auto &psc : precompiledShaders) {
-    string sh = psc.second;
-
-    for (const auto &rem : toRemove) {
-      size_t pos = sh.find(rem);
-
-      if (pos == string::npos) { // don't do stuff if it's already gone.
-        continue;
-      }
-
-      sh.erase(pos, rem.length());
-    }
-
-    precompiledShaders[psc.first] = sh;
-
-#ifdef DEBUG_SHADERS
-    cout << "=== *** PRECOMPILED (" << psc.first << ") *** ===" << endl
-         << sh << "=== *** END PRECOMPILED (" << psc.first << ") ***" << endl;
-#endif
-  }
+  precompiledShaders.insert_or_assign(
+      GL_FRAGMENT_SHADER, _renderFrag(version, code, fragFunc, vertType, fragVface));
+  precompiledShaders.insert_or_assign(
+      GL_VERTEX_SHADER, _renderVert(version, code, vertFunc, vertType));
 
   return precompiledShaders;
 }
 
 static map<string, string> includeCache;
-static regex glslInclude("\\#include \"(.*)\"");
+static regex glslInclude("\n\\#include \"(.*)\"");
 void Shader::preprocessGLSLIncludes(string *code) {
   DS("preprocess #include")
   // find includes
@@ -234,15 +264,21 @@ void Shader::preprocessGLSLIncludes(string *code) {
     } else {
       stringstream loadedCode;
       auto pathname = fs::absolute(SHADER_PATH "/./" + fileName);
+#if DEBUG_SHADERS
+      cout << pathname.c_str() << endl;
+#endif
       ifstream data;
       data.open(pathname);
       if (!data.is_open()) {
         pathname = fs::absolute(SHADER_INCLUDES "/./" + fileName);
+#if DEBUG_SHADERS
+        cout << pathname.c_str() << endl;
+#endif
         data.open(pathname);
         if (!data.is_open()) {
           cout << "WARNING: Shader include " << fileName << " wasn't found."
                << endl;
-          includeCache.insert_or_assign(fileName, "");
+          // includeCache.insert_or_assign(fileName, "");
           continue;
         }
       }
