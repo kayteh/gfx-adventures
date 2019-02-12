@@ -5,10 +5,11 @@ using namespace std;
 
 class Geom {
 public:
-  Geom(vector<float> vertices, vector<unsigned int> elements);
+  Geom(vector<float> vertices, vector<unsigned int> elements, vector<float> uvs);
   ~Geom();
 
   vector<float> vertexes;
+  vector<float> uvs;
   vector<unsigned int> elements;
 
   GLuint vao;
@@ -20,8 +21,8 @@ public:
   GLint drawType = GL_STATIC_DRAW;
 
   void bufferElements();
-  void bufferVertexes();
   void bufferVertexPosition(shared_ptr<Shader> shader);
+  void bufferVertexUV(shared_ptr<Shader> shader);
 
   void draw();
 

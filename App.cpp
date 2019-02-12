@@ -85,7 +85,13 @@ void App::createEntities() {
             0.5f + o, -0.5f + o, 0.0f + o,  // Bottom-right
             -0.5f + o, -0.5f + o, 1.0f + o, // Bottom-left
         },
-        vector<unsigned int>{0, 1, 2, 2, 3, 0});
+        vector<unsigned int>{0, 1, 2, 2, 3, 0},
+        vector<float>{
+            0.0f, 0.0f, // TL
+            1.0f, 0.0f, // TR
+            0.0f, 1.0f, // BR
+            0.0f, 0.0f  // BL
+        });
 
     p->shaderName = "triangle_combined";
     p->setMaterialCallback([o](auto shader) { shader->set("u_Depth", o * 3); });

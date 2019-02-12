@@ -1,8 +1,7 @@
 #include "Geom.h"
 
-Geom::Geom(vector<float> verts, vector<unsigned int> elems) {
-  vertexes = verts;
-  elements = elems;
+Geom::Geom(vector<float> verts, vector<unsigned int> elems, vector<float> uvs)
+    : vertexes(verts), elements(elems), uvs(uvs) {
   init();
 }
 
@@ -21,26 +20,33 @@ void Geom::bufferElements() {
                &elements.front(), drawType);
 }
 
-void Geom::bufferVertexes() {
+void Geom::bufferVertexPosition(shared_ptr<Shader> shader) {
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(float),
                &vertexes.front(), drawType);
+  GLint a = glGetAttribLocation(shader->program, "in_Position");
+  glVertexAttribPointer(a, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(a);
 }
 
-void Geom::bufferVertexPosition(shared_ptr<Shader> shader) {
-  GLint a = glGetAttribLocation(shader->program, "position");
-  glVertexAttribPointer(a, 3, GL_FLOAT, GL_FALSE, 0, 0);
+void Geom::bufferVertexUV(shared_ptr<Shader> shader) {
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(float),
+               &uvs.front(), drawType);
+  GLint a = glGetAttribLocation(shader->program, "in_Texcoord0");
+  glVertexAttribPointer(a, 2, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(a);
 }
 
 void Geom::draw() {
   glBindVertexArray(vao);
   bufferElements();
-  bufferVertexes();
 
   auto shader = Shader::get(shaderName);
   shader->use();
+
   bufferVertexPosition(shader);
+  bufferVertexUV(shader);
 
   callMaterial(shader);
 

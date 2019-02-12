@@ -13,10 +13,12 @@ public:
         if (_textureCache.count(name) > 0) {
             return _textureCache[name];
         } else {
-            return make_shared<Texture>(name);
+            auto t = make_shared<Texture>(name);
+            _textureCache.insert_or_assign(name, t);
+            return t;
         }
     };
 
 private:
     static map<string, shared_ptr<Texture>> _textureCache;
-}
+};

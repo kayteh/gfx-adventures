@@ -41,12 +41,14 @@
 #pragma vertex vert
 #pragma fragment frag
 
-in vec3 position;
+in vec3 in_Position;
+inout vec2 in_Texcoord0;
 
 uniform float u_Depth;
 
 void vert(inout vec4 pos) {
-  pos = vec4(position, 1.0);
+  pos = vec4(in_Position, 1.0);
+  in_Texcoord0 = in_Texcoord0;
 }
 
 vec4 frag() {
@@ -55,6 +57,8 @@ vec4 frag() {
     cos(0.6 + u_Depth + u_Time.y * 0.001) + 1 * 0.5,
     1-(sin(1 + u_Depth + u_Time.y * 0.001) + 1 * 0.5)
   );
+
+  sinTime -= vec3(in_Texcoord0, 0.0);
 
   return vec4(sinTime, 1.0);
   // return vec4(1.0, 1.0, 1.0, 1.0);
