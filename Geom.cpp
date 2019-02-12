@@ -20,22 +20,36 @@ void Geom::bufferElements() {
                &elements.front(), drawType);
 }
 
-void Geom::bufferVertexPosition(shared_ptr<Shader> shader) {
+void Geom::bufferVertexData(shared_ptr<Shader> shader, vector<float> data) {
+  size_t dataSize = data.size() * sizeof(float);
+  
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, vertexes.size() * sizeof(float),
-               &vertexes.front(), drawType);
-  GLint a = glGetAttribLocation(shader->program, "in_Position");
-  glVertexAttribPointer(a, 3, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(a);
+  glBufferData(GL_ARRAY_BUFFER, dataSize,
+               &data.front(), drawType);
+
+  GLint pos = glGetAttribLocation(shader->program, "in_Position");
+  glVertexAttribPointer(pos, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+  // glVertexAttribPointer(pos, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(pos);  
+
+  GLint uv = glGetAttribLocation(shader->program, "in_Texcoord0");
+  glVertexAttribPointer(uv, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)( 3 * sizeof(float) ));
+  glEnableVertexAttribArray(uv);
 }
 
-void Geom::bufferVertexUV(shared_ptr<Shader> shader) {
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(float),
-               &uvs.front(), drawType);
-  GLint a = glGetAttribLocation(shader->program, "in_Texcoord0");
-  glVertexAttribPointer(a, 2, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(a);
+
+void Geom::combineVertexData(vector<float> * data) {
+  // what i know is i need to add 2 items for every 3
+  data->reserve(vertexes.size() + uvs.size());
+  for (int i = 0; i < vertexes.size() / 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      data->push_back(vertexes[i*3+j]);
+    }
+
+    data->push_back(uvs[i*2]);
+    data->push_back(uvs[i*2+1]);
+    cout.flush();
+  }
 }
 
 void Geom::draw() {
@@ -45,8 +59,10 @@ void Geom::draw() {
   auto shader = Shader::get(shaderName);
   shader->use();
 
-  bufferVertexPosition(shader);
-  bufferVertexUV(shader);
+  vector<float> combinedVertexData;
+  combineVertexData(&combinedVertexData);
+
+  bufferVertexData(shader, combinedVertexData);
 
   callMaterial(shader);
 

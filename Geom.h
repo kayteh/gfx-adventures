@@ -21,8 +21,8 @@ public:
   GLint drawType = GL_STATIC_DRAW;
 
   void bufferElements();
-  void bufferVertexPosition(shared_ptr<Shader> shader);
-  void bufferVertexUV(shared_ptr<Shader> shader);
+  void bufferVertexData(shared_ptr<Shader> shader, vector<float> data);
+  void combineVertexData(vector<float> *data);
 
   void draw();
 
